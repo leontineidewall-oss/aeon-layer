@@ -160,6 +160,20 @@ h2{font-size:clamp(38px,5.4vw,72px)}
 footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflow:hidden}
 .bigwm{width:100%;max-width:1100px;margin:0 auto;display:block;opacity:.95}
 .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;margin-top:56px;padding-top:24px;border-top:1px solid var(--line);font:400 12px var(--mono);color:var(--dim)}
+.pulse{margin-top:22px;display:flex;align-items:center;gap:10px;font:500 12px var(--mono);color:var(--mute);letter-spacing:.04em}
+.pulse i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--ok);animation:ping 2s infinite}
+.pulse b{color:var(--ink);font-weight:500}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(127,224,200,.55)}100%{box-shadow:0 0 0 12px rgba(127,224,200,0)}}
+.scanrow{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:12px 22px;border-bottom:1px solid var(--line);font:400 12px var(--mono);color:var(--dim)}
+.live{font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ok);border:1px solid rgba(127,224,200,.35);border-radius:999px;padding:8px 14px;transition:background .25s}
+.live:hover{background:rgba(127,224,200,.08)}.live:disabled{opacity:.45;cursor:default}
+.expo{padding:20px 24px 4px}
+.expo small{display:block;font:500 10.5px var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.bar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.bar span{height:6px;border-radius:3px;background:rgba(230,204,146,.12);transition:background .6s}
+.expo[data-l="1"] .bar span:nth-child(-n+1),.expo[data-l="2"] .bar span:nth-child(-n+2),.expo[data-l="3"] .bar span{background:var(--c)}
+.expo b{display:block;margin-top:10px;font:500 22px/1.2 var(--serif);color:var(--ink)}
+.expo p{font:400 12px var(--mono);color:var(--dim);margin-top:4px}
 /* motion */
 .rv{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
 .rv.vis{opacity:1;transform:none}
@@ -211,6 +225,7 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
     <p class="lede rv">Every buy you make is read by bots within seconds. <b>AEON breaks the link</b> between your wallet and your trades: shield your SOL, let it mix, then trade from a fresh wallet nobody has ever seen.</p>
     <div class="ctas rv"><a class="btn gold mag" href="#scan">See what they see &rarr;</a><a class="btn line mag" href="#how">How it works</a></div>
     <div class="ca rv"><span>CA</span><code id="ca">&mdash;</code><button id="cacopy" disabled>COPY</button></div>
+    <div class="pulse rv" id="pulse"><i></i><span>Live on Solana: <b id="tps">&mdash;</b> transactions a second, every one of them public.</span></div>
   </div>
   <div class="sealbox rv"><canvas id="seal" aria-label="The AEON seal: a closed eye. Hover to open it."></canvas><div class="sealtip">HOVER TO OPEN THE EYE</div></div>
 </div></header>
@@ -225,6 +240,7 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
   <div class="scan rv" id="scanbox">
     <form id="scanform" autocomplete="off"><input id="addr" name="addr" placeholder="Paste a Solana wallet address" spellcheck="false" aria-label="Solana wallet address"><button class="btn gold" id="scanbtn" type="submit">Scan wallet</button></form>
     <div class="msg" id="scanmsg" role="status"></div>
+    <div class="scanrow"><span>No address to hand? Watch a stranger&rsquo;s.</span><button class="live" id="livebtn" type="button" disabled>Scan a live pump.fun trader</button></div>
     <div class="scangrid">
       <div class="graphbox"><canvas id="graph" aria-label="Map of wallets linked to the scanned wallet"></canvas>
         <div class="gcap"><div class="lg"><b style="--c:var(--gold)">sent to</b><b style="--c:var(--vio)">received from</b></div><button class="tog" id="aeonview" hidden>See it through AEON</button></div></div>
@@ -238,6 +254,7 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
           <div class="fact"><small>Funded by</small><div class="v m" data-f="funder">&mdash;</div><div class="s" data-f="funders">the wallet that paid first</div></div>
           <div class="fact wide"><small>Apps it uses</small><div class="chips" data-f="apps"><span class="chip">&mdash;</span></div></div>
         </div>
+        <div class="expo" id="expo" data-l="0" style="--c:var(--gold)"><small>Exposure</small><div class="bar"><span></span><span></span><span></span></div><b id="expol">&mdash;</b><p id="expow">Based only on what&rsquo;s visible above.</p></div>
         <p class="verdict" id="verdict">Scan a wallet to see its trail.</p>
       </div>
     </div>
@@ -430,6 +447,8 @@ var Seal = (function () {
     var cx = W / 2, cy = W / 2, R = W * 0.43, intro = RM ? 1 : ease(t / 1.6);
     // eye state machine: opens once after the intro, then follows hover / focus
     var want = st.hover || st.focus ? 1 : (t > 1.7 && t < 3.6 ? 1 : 0);
+    if (!want && t > 6 && (t - 6) % 9 < 0.9) want = 0.32;
+    if (want === 1 && st.hover && t % 4.2 > 4.02) want = 0;
     if (st.hold > now) want = 1;
     st.op += (want - st.op) * (RM ? 1 : 0.09);
     var op = st.op;
@@ -722,6 +741,11 @@ var Scan = (function () {
     ["bal", "txs", "first", "last", "links", "funder"].forEach(function (k) { set(k, "—"); });
     set("bals", "SOL, live"); set("txss", "public history"); set("firsts", " "); set("lasts", " "); set("linkss", "by direct SOL transfers"); set("funders", "the wallet that paid first");
     f("apps").innerHTML = '<span class="chip">—</span>';
+    $("#expo").setAttribute("data-l", 0); $("#expol").textContent = "—"; $("#expow").textContent = "Based only on what's visible above.";
+  }
+  function roll(k) {
+    var el = f(k); if (!el || RM) return; var fin = el.textContent, n = 0;
+    (function st() { el.textContent = fin.replace(/[0-9]/g, function (c) { return Math.random() < n / 16 ? c : String((Math.random() * 10) | 0); }); if (++n <= 16) setTimeout(st, 40); else el.textContent = fin; })();
   }
   function render(d) {
     data = d; born = performance.now(); aeon = 0; tog.hidden = false; tog.textContent = "See it through AEON";
@@ -740,6 +764,11 @@ var Scan = (function () {
     if (d.funder) bits.push("a funding trail back to <b>" + short(d.funder) + "</b>");
     if (apps.length) bits.push("a habit of using <b>" + apps.slice(0, 2).map(function (a) { return a.name; }).join(" and ") + "</b>");
     verdict.innerHTML = bits.length ? "Anyone can see " + (bits.length > 1 ? bits.slice(0, -1).join(", ") + " and " + bits[bits.length - 1] : bits[0]) + ". Through AEON, a fresh wallet shows <b>none of it</b>." : "This wallet has no public history yet. That's what a fresh AEON wallet looks like: nothing to read.";
+    var lvl = (d.linkCount >= 5 || d.funder || d.txs >= 200) ? 3 : (d.txs >= 20 || d.linkCount >= 1) ? 2 : d.txs ? 1 : 0;
+    var ex = $("#expo"); ex.setAttribute("data-l", lvl); ex.style.setProperty("--c", ["var(--gold)", "var(--ok)", "var(--gold)", "var(--red)"][lvl]);
+    $("#expol").textContent = ["Nothing visible", "Low", "Medium", "High"][lvl];
+    $("#expow").textContent = lvl === 3 ? "Linked, funded or busy enough to profile." : lvl === 2 ? "Enough history to start a profile." : lvl === 1 ? "A thin trail, but a trail." : "Nothing public to read yet.";
+    ["bal", "txs", "links"].forEach(roll);
     // graph nodes
     nodes = (d.links || []).map(function (l, i, arr) {
       var a = i / Math.max(1, arr.length) * TAU + 0.4, rr = 0.62 + ((i * 37) % 23) / 23 * 0.3;
@@ -792,6 +821,27 @@ var Scan = (function () {
   }
   var run = loop(function () { draw(performance.now() / 1000); }, 30); visible(gc, run);
   return { render: render };
+})();
+
+/* ---------- live pulse: tps + a real trader to scan ---------- */
+(function () {
+  var el = $("#tps"), lb = $("#livebtn"), traders = [], shown = null;
+  function rollTo(v) {
+    var fin = Math.round(v).toLocaleString("en-US"); if (RM || shown === fin) { el.textContent = fin; shown = fin; return; }
+    var n = 0; (function st() { el.textContent = fin.replace(/[0-9]/g, function (c) { return Math.random() < n / 12 ? c : String((Math.random() * 10) | 0); }); if (++n <= 12) setTimeout(st, 45); else { el.textContent = fin; shown = fin; } })();
+  }
+  function pull() {
+    fetch("/api/pulse").then(function (r) { return r.json(); }).then(function (j) {
+      if (typeof j.tps === "number" && j.tps > 0) rollTo(j.tps); else { el.textContent = "—"; shown = null; }
+      traders = Array.isArray(j.traders) ? j.traders.filter(function (t) { return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(t); }) : [];
+      lb.disabled = !traders.length;
+    }).catch(function () { el.textContent = "—"; shown = null; });
+  }
+  lb.addEventListener("click", function () {
+    if (!traders.length) return; $("#addr").value = traders[(Math.random() * traders.length) | 0];
+    var fm = $("#scanform"); if (fm.requestSubmit) fm.requestSubmit(); else $("#scanbtn").click();
+  });
+  pull(); setInterval(pull, 20000);
 })();
 
 /* ---------- contract + market ---------- */
