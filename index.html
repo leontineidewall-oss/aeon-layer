@@ -174,6 +174,16 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
 .expo[data-l="1"] .bar span:nth-child(-n+1),.expo[data-l="2"] .bar span:nth-child(-n+2),.expo[data-l="3"] .bar span{background:var(--c)}
 .expo b{display:block;margin-top:10px;font:500 22px/1.2 var(--serif);color:var(--ink)}
 .expo p{font:400 12px var(--mono);color:var(--dim);margin-top:4px}
+.head{grid-template-columns:minmax(0,1fr)!important;gap:0!important;margin-bottom:44px}
+.sub{margin-top:16px;color:var(--mute);font-size:18px}
+.sec{padding-top:130px}
+.card p{font-size:16px}
+.rule h3{margin:12px 0 0;font-size:30px}
+.step{min-height:46vh}.step p{font-size:19px}
+.verdict{font-size:19px}
+.state{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.state span{display:inline-flex;align-items:center;gap:8px;font:500 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;padding:9px 13px;border-radius:999px;border:1px solid var(--line2);color:var(--mute)}
+.state span:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
 /* motion */
 .rv{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
 .rv.vis{opacity:1;transform:none}
@@ -214,7 +224,7 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
 <div class="cur" aria-hidden="true"></div>
 <nav id="nav"><div class="wrap">
   <a href="#top" aria-label="AEON home"><span class="wm" data-wm></span></a>
-  <div class="links"><a href="#scan">Scan</a><a href="#how">How it works</a><a href="#token">$AEON</a><a href="#limits">Limits</a><a href="#faq">FAQ</a></div>
+  <div class="links"><a href="#scan">Scan</a><a href="#how">How</a><a href="#token">$AEON</a><a href="#faq">FAQ</a></div>
   <button class="snd" id="snd" aria-pressed="false" aria-label="Toggle sound" title="Sound">&#9834;</button>
 </div></nav>
 
@@ -222,10 +232,10 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
   <div>
     <span class="kick" data-scr>The privacy layer for Solana</span>
     <h1 data-split>They track every wallet. <em>Not yours.</em></h1>
-    <p class="lede rv">Every buy you make is read by bots within seconds. <b>AEON breaks the link</b> between your wallet and your trades: shield your SOL, let it mix, then trade from a fresh wallet nobody has ever seen.</p>
+    <p class="lede rv">Every buy is watched. <b>AEON breaks the link</b> between your wallet and your trades.</p>
     <div class="ctas rv"><a class="btn gold mag" href="#scan">See what they see &rarr;</a><a class="btn line mag" href="#how">How it works</a></div>
     <div class="ca rv"><span>CA</span><code id="ca">&mdash;</code><button id="cacopy" disabled>COPY</button></div>
-    <div class="pulse rv" id="pulse"><i></i><span>Live on Solana: <b id="tps">&mdash;</b> transactions a second, every one of them public.</span></div>
+    <div class="pulse rv" id="pulse"><i></i><span>Live on Solana: <b id="tps">&mdash;</b> tx a second. All public.</span></div>
   </div>
   <div class="sealbox rv"><canvas id="seal" aria-label="The AEON seal: a closed eye. Hover to open it."></canvas><div class="sealtip">HOVER TO OPEN THE EYE</div></div>
 </div></header>
@@ -233,14 +243,11 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
 <div class="band" aria-hidden="true"><div class="row a" id="bandA"></div><div class="row b" id="bandB"></div></div>
 
 <section class="sec" id="scan"><div class="wrap">
-  <div class="head">
-    <div><span class="num">01 &mdash; WHAT THEY SEE</span><h2 data-split>Your wallet is an <em>open book.</em></h2></div>
-    <p class="rv">Paste any Solana address. This is what every copy-bot, tracker and labeler can read about it, right now, for free. Nothing here is private, which is the point.</p>
-  </div>
+  <div class="head"><span class="num">01 &mdash; WHAT THEY SEE</span><h2 data-split>Your wallet is an <em>open book.</em></h2><p class="sub rv">Paste any address. See what the bots see.</p></div>
   <div class="scan rv" id="scanbox">
     <form id="scanform" autocomplete="off"><input id="addr" name="addr" placeholder="Paste a Solana wallet address" spellcheck="false" aria-label="Solana wallet address"><button class="btn gold" id="scanbtn" type="submit">Scan wallet</button></form>
     <div class="msg" id="scanmsg" role="status"></div>
-    <div class="scanrow"><span>No address to hand? Watch a stranger&rsquo;s.</span><button class="live" id="livebtn" type="button" disabled>Scan a live pump.fun trader</button></div>
+    <div class="scanrow"><span>No address? Try a stranger&rsquo;s.</span><button class="live" id="livebtn" type="button" disabled>Scan a live trader</button></div>
     <div class="scangrid">
       <div class="graphbox"><canvas id="graph" aria-label="Map of wallets linked to the scanned wallet"></canvas>
         <div class="gcap"><div class="lg"><b style="--c:var(--gold)">sent to</b><b style="--c:var(--vio)">received from</b></div><button class="tog" id="aeonview" hidden>See it through AEON</button></div></div>
@@ -262,42 +269,33 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
 </div></section>
 
 <section class="sec" id="problem"><div class="wrap">
-  <div class="head">
-    <div><span class="num">02 &mdash; THE TRENCHES HAVE EYES</span><h2 data-split>Three ways your trail <em>costs you.</em></h2></div>
-    <p class="rv">None of this needs hacking. It's all public data, read by software that never sleeps.</p>
-  </div>
+  <div class="head"><span class="num">02 &mdash; THE TRENCHES HAVE EYES</span><h2 data-split>Seen means <em>beaten.</em></h2></div>
   <div class="cards">
-    <article class="card rv"><canvas data-viz="copy"></canvas><h3>Copied</h3><p>Copy-bots follow wallets that win. The moment you buy, they buy behind you, and your edge is gone before your transaction settles.</p></article>
-    <article class="card rv"><canvas data-viz="sand"></canvas><h3>Sandwiched</h3><p>Bots see your swap before it lands, buy first and sell into you. You get a worse price, and they keep the difference.</p></article>
-    <article class="card rv"><canvas data-viz="label"></canvas><h3>Labeled</h3><p>Trackers tag wallets as dev, sniper, whale or insider. The label follows you forever, and everyone you trade against can read it.</p></article>
+    <article class="card rv"><canvas data-viz="copy"></canvas><h3>Copied</h3><p>Bots buy right behind you.</p></article>
+    <article class="card rv"><canvas data-viz="sand"></canvas><h3>Sandwiched</h3><p>Bots buy first, then sell into you.</p></article>
+    <article class="card rv"><canvas data-viz="label"></canvas><h3>Labeled</h3><p>Dev, sniper, whale. The tag sticks.</p></article>
   </div>
 </div></section>
 
 <section class="sec" id="how"><div class="wrap">
-  <div class="head">
-    <div><span class="num">03 &mdash; HOW AEON WORKS</span><h2 data-split>Four steps out of <em>sight.</em></h2></div>
-    <p class="rv">AEON is a shielded layer built on encrypted computation. Funds go in under one name and come out under another, with nothing on-chain to tie them together.</p>
-  </div>
+  <div class="head"><span class="num">03 &mdash; HOW AEON WORKS</span><h2 data-split>Four steps out of <em>sight.</em></h2></div>
   <div class="how">
     <div class="stick"><canvas id="flow"></canvas><span class="lab" id="flowlab">01 · SHIELD</span></div>
     <div class="steps">
-      <div class="step" data-step="0"><span class="n">01</span><h3>Shield</h3><p>Deposit SOL into a shielded balance. Amounts and ownership are encrypted, so trackers watching the pool see a deposit, not a person.</p><p class="tech">ARCIUM ENCRYPTED COMPUTE · SHIELDED BALANCE</p></div>
-      <div class="step" data-step="1"><span class="n">02</span><h3>Mix</h3><p>Your funds sit among everyone else's. Withdrawals leave after a random delay and in common amounts, because the same amount out right away would give you away.</p><p class="tech">RANDOM DELAY · SPLIT AMOUNTS · SHARED POOL</p></div>
-      <div class="step" data-step="2"><span class="n">03</span><h3>Emerge</h3><p>Funds come out in a brand-new one-time wallet. No history, no labels, no funding trail back to you.</p><p class="tech">ONE-TIME WALLET · NO FUNDING LINK</p></div>
-      <div class="step" data-step="3"><span class="n">04</span><h3>Trade</h3><p>Buy and sell from the fresh wallet through Jupiter or the pump.fun curve. Bots see a stranger, so there's nothing to copy and nothing to label.</p><p class="tech">JUPITER ROUTING · PUMP.FUN CURVE</p></div>
+      <div class="step" data-step="0"><span class="n">01</span><h3>Shield</h3><p>Deposit into an encrypted balance.</p><p class="tech">ARCIUM ENCRYPTED COMPUTE</p></div>
+      <div class="step" data-step="1"><span class="n">02</span><h3>Mix</h3><p>Blend in. Leave later, in common amounts.</p><p class="tech">RANDOM DELAY · SPLIT AMOUNTS</p></div>
+      <div class="step" data-step="2"><span class="n">03</span><h3>Emerge</h3><p>Come out in a wallet with no past.</p><p class="tech">ONE-TIME WALLET</p></div>
+      <div class="step" data-step="3"><span class="n">04</span><h3>Trade</h3><p>Buy and sell unseen.</p><p class="tech">JUPITER · PUMP.FUN</p></div>
     </div>
   </div>
 </div></section>
 
 <section class="sec" id="token"><div class="wrap">
-  <div class="head">
-    <div><span class="num">04 &mdash; $AEON</span><h2 data-split>The toll, and <em>the fire.</em></h2></div>
-    <p class="rv">$AEON has one job: it is burned by every private trade. The more the layer is used, the less $AEON exists.</p>
-  </div>
+  <div class="head"><span class="num">04 &mdash; $AEON</span><h2 data-split>The toll, and <em>the fire.</em></h2></div>
   <div class="rules">
-    <div class="rule rv"><span class="n">01</span><h3>Every crossing pays a toll</h3><p>Each private trade through the layer pays a small fee. Rates are published with the contract before the pool opens.</p></div>
-    <div class="rule rv"><span class="n">02</span><h3>The toll buys and burns</h3><p>Fees buy $AEON on the open market and burn it. Every burn is an on-chain transaction anyone can check.</p></div>
-    <div class="rule rv"><span class="n">03</span><h3>Holders pay less</h3><p>Holding $AEON lowers your toll, so the people who use the layer most have a reason to hold the token.</p></div>
+    <div class="rule rv"><span class="n">01</span><h3>Every private trade pays a toll.</h3></div>
+    <div class="rule rv"><span class="n">02</span><h3>The toll buys $AEON and burns it.</h3></div>
+    <div class="rule rv"><span class="n">03</span><h3>Holders pay a lower toll.</h3></div>
   </div>
   <div class="stats rv">
     <div class="stat"><small>Price</small><b data-m="price">&mdash;</b></div>
@@ -305,49 +303,31 @@ footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflo
     <div class="stat"><small>24h volume</small><b data-m="vol">&mdash;</b></div>
     <div class="stat"><small>Liquidity</small><b data-m="liq">&mdash;</b></div>
   </div>
-  <p class="src" id="msrc">Live market data appears here once the contract is posted. A dash means no data yet, never zero.</p>
+  <p class="src" id="msrc">Live once the contract is posted. A dash means no data, never zero.</p>
 </div></section>
 
 <section class="sec" id="limits"><div class="wrap">
-  <div class="head">
-    <div><span class="num">05 &mdash; HONEST LIMITS</span><h2 data-split>What it cannot do, <em>and so.</em></h2></div>
-    <p class="rv">Privacy tools fail when they oversell. Here is exactly where AEON stops, and what we do about it.</p>
-  </div>
+  <div class="head"><span class="num">05 &mdash; HONEST LIMITS</span><h2 data-split>What it <em>can&rsquo;t</em> do.</h2></div>
   <div class="tbl rv">
-    <div class="tr th"><div>It cannot</div><div>So it</div></div>
-    <div class="tr"><div>Hide you in an empty pool.</div><div>Shows the pool size live, so you can judge your cover before you cross. Privacy grows with every user.</div></div>
-    <div class="tr"><div>Stop you from linking yourself.</div><div>Warns you before you send from a fresh wallet back to your old one, which would undo everything.</div></div>
-    <div class="tr"><div>Promise "untraceable".</div><div>Says "unlinked". Timing and amounts can still leak if you rush, which is why withdrawals wait.</div></div>
-    <div class="tr"><div>Run on battle-tested privacy tech yet.</div><div>Starts with low deposit caps, because Arcium's encrypted compute is still young. Caps rise as it proves itself.</div></div>
-    <div class="tr"><div>Serve sanctioned wallets.</div><div>Screens deposits, so the pool stays clean for everyone in it.</div></div>
+    <div class="tr th"><div>It cannot</div><div>So</div></div>
+    <div class="tr"><div>Hide you in an empty pool.</div><div>Pool size is shown live.</div></div>
+    <div class="tr"><div>Stop you linking yourself.</div><div>It warns you first.</div></div>
+    <div class="tr"><div>Promise untraceable.</div><div>It promises unlinked.</div></div>
+    <div class="tr"><div>Serve sanctioned wallets.</div><div>Deposits are screened.</div></div>
   </div>
-</div></section>
-
-<section class="sec" id="status"><div class="wrap">
-  <div class="head">
-    <div><span class="num">06 &mdash; WHAT'S LIVE</span><h2 data-split>Where things <em>stand.</em></h2></div>
-    <p class="rv">No dates we can't keep. This list changes when the thing actually ships.</p>
-  </div>
-  <div class="status">
-    <div class="st rv"><span class="pill" style="--c:var(--ok)">Live</span><h3>Wallet scanner</h3><p>The scanner above runs on public Solana data. Use it on any wallet, including your own.</p></div>
-    <div class="st rv"><span class="pill" style="--c:var(--gold)">At launch</span><h3>$AEON</h3><p>The token, its contract and live market data. The contract appears at the top of this page.</p></div>
-    <div class="st rv"><span class="pill" style="--c:var(--vio)">In development</span><h3>The shielded pool</h3><p>Shield, mix, emerge, trade. It opens after review, with low caps first.</p></div>
-  </div>
+  <div class="state rv"><span style="--c:var(--ok)">Scanner &middot; live</span><span style="--c:var(--gold)">$AEON &middot; at launch</span><span style="--c:var(--vio)">Shielded pool &middot; in development</span></div>
 </div></section>
 
 <section class="sec" id="faq"><div class="wrap">
-  <div class="head"><div><span class="num">07 &mdash; QUESTIONS</span><h2 data-split>Asked in <em>the dark.</em></h2></div></div>
+  <div class="head"><span class="num">06 &mdash; QUESTIONS</span><h2 data-split>Asked in <em>the dark.</em></h2></div>
   <div class="faq rv">
-    <details><summary>Is AEON a mixer?</summary><p>It's a shielded balance, which is close. The difference is that balances stay encrypted while they're in the layer, so you can wait, split and withdraw on your own schedule instead of sending a fixed amount through a fixed pipe.</p></details>
-    <details><summary>Does AEON hold my funds?</summary><p>It's designed so it can't. Funds sit in an on-chain program, and only your key can move them. No team wallet can spend them.</p></details>
-    <details><summary>What tech is it built on?</summary><p>Arcium's encrypted compute network handles the private balances. Trades from fresh wallets route through Jupiter or the pump.fun bonding curve like any other wallet.</p></details>
-    <details><summary>Is privacy legal?</summary><p>Financial privacy is normal: your bank balance isn't public. AEON screens deposits against sanctions lists and doesn't serve flagged wallets. Check the rules where you live.</p></details>
-    <details><summary>What does the scanner do with my address?</summary><p>It reads public data from a Solana RPC and shows it to you. Nothing is stored, and no wallet connection is needed.</p></details>
-    <details><summary>When can I use the layer?</summary><p>When the status above says live. We'd rather ship it late than ship it leaky.</p></details>
+    <details><summary>Is AEON a mixer?</summary><p>Close. Balances stay encrypted, so you choose when and how to leave.</p></details>
+    <details><summary>Who holds my funds?</summary><p>Only your key. No team wallet can move them.</p></details>
+    <details><summary>What is it built on?</summary><p>Arcium encrypted compute, with Jupiter and pump.fun for trades.</p></details>
+    <details><summary>Does the scanner store anything?</summary><p>No. It reads public data and shows it to you.</p></details>
   </div>
 </div></section>
-
-<footer><div class="wrap">
+<div class="wrap">
   <span class="bigwm" data-wm data-big></span>
   <div class="foot"><span>AEON · the privacy layer for Solana</span><span>Nothing here is financial advice. Crypto is risky.</span></div>
 </div></footer>
@@ -852,7 +832,7 @@ var Scan = (function () {
   function market() {
     fetch("/api/market").then(function (r) { return r.json(); }).then(function (j) {
       var src = $("#msrc");
-      if (!j.live) { src.textContent = "Live market data appears here once the contract is posted. A dash means no data yet, never zero."; return; }
+      if (!j.live) { src.textContent = "Live once the contract is posted. A dash means no data, never zero."; return; }
       if (j.error) { src.textContent = "Market data unavailable right now. Showing dashes until it's back."; return; }
       var p = j.pair || {};
       $('[data-m="price"]').textContent = money(p.price, true); $('[data-m="mcap"]').textContent = money(p.mcap); $('[data-m="vol"]').textContent = money(p.vol); $('[data-m="liq"]').textContent = money(p.liq);
