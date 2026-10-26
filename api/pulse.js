@@ -1,6 +1,8 @@
 // live proof: how many public transactions per second, and a few real traders to scan
 const { B58, rpc, send } = require("./_lib");
 const PUMP = "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P";
+const opt = { encoding: "json", maxSupportedTransactionVersion: 0, commitment: "confirmed" };
+let last = { traders: [], at: 0 };
 module.exports = async (req, res) => {
   const out = { tps: null, traders: [], t: Date.now() };
   try {
@@ -9,16 +11,18 @@ module.exports = async (req, res) => {
     if (ok.length) out.tps = ok.reduce((a, x) => a + x.numTransactions / x.samplePeriodSecs, 0) / ok.length;
   } catch (e) {}
   try {
-    const sigs = await rpc("getSignaturesForAddress", [PUMP, { limit: 8 }]);
-    const pick = (Array.isArray(sigs) ? sigs : []).filter(x => x && !x.err).slice(0, 4);
-    const opt = { encoding: "jsonParsed", maxSupportedTransactionVersion: 0, commitment: "confirmed" };
-    const txs = await Promise.all(pick.map(x => rpc("getTransaction", [x.signature, opt]).catch(() => null)));
-    const seen = {};
-    txs.forEach(tx => {
-      const ks = (((tx || {}).transaction || {}).message || {}).accountKeys || [];
-      const k = ks.find(a => a && a.signer), pk = k && k.pubkey;
-      if (pk && B58.test(pk) && !seen[pk]) { seen[pk] = 1; out.traders.push(pk); }
-    });
+    const sigs = await rpc("getSignaturesForAddress", [PUMP, { limit: 10 }]);
+    const pick = (Array.isArray(sigs) ? sigs : []).filter(x => x && !x.err).slice(0, 6);
+    for (const x of pick) {
+      if (out.traders.length >= 3) break;
+      try {
+        const tx = await rpc("getTransaction", [x.signature, opt]);
+        const pk = ((((tx || {}).transaction || {}).message || {}).accountKeys || [])[0];
+        if (typeof pk === "string" && B58.test(pk) && out.traders.indexOf(pk) < 0) out.traders.push(pk);
+      } catch (e) {}
+    }
   } catch (e) {}
-  send(res, 200, out, 15);
+  if (out.traders.length) last = { traders: out.traders, at: Date.now() };
+  else if (Date.now() - last.at < 600000) out.traders = last.traders;
+  send(res, 200, out, out.traders.length ? 15 : 4);
 };
