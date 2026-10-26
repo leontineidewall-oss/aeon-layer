@@ -1,0 +1,822 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AEON · the privacy layer for Solana</title>
+<meta name="description" content="Every wallet on Solana is watched. AEON breaks the link between your wallet and your trades: shield, mix, emerge in a fresh wallet, trade unseen.">
+<meta name="theme-color" content="#07070f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AEON · the privacy layer for Solana">
+<meta property="og:description" content="They track every wallet. Not yours.">
+<meta property="og:image" content="https://aeon-layer.vercel.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://aeon-layer.vercel.app/og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07070f;--bg2:#0c0b1a;--ink:#efe9da;--mute:#9b94ab;--dim:#6b6580;--gold:#e6cc92;--gold2:#c79a55;--vio:#8b7bff;--line:rgba(230,204,146,.16);--line2:rgba(230,204,146,.32);--card:rgba(20,18,40,.55);--red:#ff7b74;--ok:#7fe0c8;
+--serif:"Cormorant Garamond",Georgia,serif;--sans:Inter,system-ui,-apple-system,Segoe UI,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{overflow-x:clip;background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+::selection{background:rgba(139,123,255,.35)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;width:min(1180px,100%);margin:0 auto;padding-left:24px;padding-right:24px}
+section{position:relative;z-index:1;scroll-margin-top:80px}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+nav.solid{background:rgba(7,7,15,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--line)}
+nav .wrap{display:flex;align-items:center;gap:28px;height:68px}
+nav .wm{width:86px;display:block}
+nav .links{display:flex;gap:26px;margin-left:auto;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+nav .links a{text-decoration:none;transition:color .2s}nav .links a:hover{color:var(--gold)}
+.snd{width:34px;height:34px;border:1px solid var(--line2);border-radius:50%;display:grid;place-items:center;color:var(--mute);font-size:13px;transition:.25s}
+.snd[aria-pressed=true]{color:var(--bg);background:var(--gold);border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 26px;border-radius:999px;font-size:14px;font-weight:500;letter-spacing:.04em;text-decoration:none;transition:transform .2s,box-shadow .3s,background .3s;position:relative;will-change:transform}
+.btn.gold{background:linear-gradient(135deg,#f3dfae,#c99c57);color:#151020;box-shadow:0 10px 40px -12px rgba(230,204,146,.55)}
+.btn.gold:hover{box-shadow:0 14px 50px -10px rgba(230,204,146,.8)}
+.btn.line{border:1px solid var(--line2);color:var(--ink)}
+.btn.line:hover{border-color:var(--gold);color:var(--gold)}
+.btn:disabled{opacity:.5;cursor:wait}
+/* hero */
+.hero{min-height:100svh;display:grid;align-items:center;padding-top:96px;padding-bottom:64px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:48px;align-items:center}
+.kick{font:500 12px/1 var(--mono);letter-spacing:.32em;text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:12px}
+.kick:before{content:"";width:28px;height:1px;background:var(--gold);opacity:.7}
+h1,h2,h3{font-family:var(--serif);font-weight:500;letter-spacing:-.01em;line-height:1.02}
+h1{font-size:clamp(48px,7.4vw,104px);margin:26px 0 24px}
+h1 em,h2 em{font-style:italic;color:var(--gold)}
+h2{font-size:clamp(38px,5.4vw,72px)}
+.lede{font-size:clamp(17px,1.5vw,19px);color:var(--mute);max-width:540px}
+.lede b{color:var(--ink);font-weight:500}
+.ctas{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
+.ca{margin-top:34px;display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:14px;padding:12px 14px 12px 18px;max-width:520px;background:rgba(12,11,26,.5)}
+.ca span{font:500 11px var(--mono);letter-spacing:.24em;color:var(--dim)}
+.ca code{font:400 13px var(--mono);color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.ca button{font:500 11px var(--mono);letter-spacing:.18em;color:var(--gold);border:1px solid var(--line2);border-radius:8px;padding:8px 12px}
+.ca button:disabled{color:var(--dim);border-color:var(--line);cursor:default}
+.sealbox{position:relative;aspect-ratio:1;width:100%;max-width:600px;justify-self:end}
+#seal{width:100%;height:100%;display:block;cursor:pointer}
+.sealtip{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);font:500 10px var(--mono);letter-spacing:.3em;color:var(--dim);white-space:nowrap}
+/* band */
+.band{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0;position:relative;z-index:1;background:rgba(7,7,15,.4)}
+.band .row{display:flex;gap:46px;white-space:nowrap;font:italic 500 clamp(30px,4vw,54px)/1 var(--serif);color:var(--ink);will-change:transform}
+.band .row i{font-style:normal;color:var(--gold);font-size:.6em;align-self:center}
+.band .row.b{color:transparent;-webkit-text-stroke:1px rgba(230,204,146,.5);margin-top:14px}
+/* sections */
+.sec{padding-top:150px;padding-bottom:40px}
+.head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:48px;align-items:end;margin-bottom:56px}
+.head p{color:var(--mute);font-size:17px}
+.num{font:500 12px var(--mono);color:var(--dim);letter-spacing:.2em;margin-bottom:18px;display:block}
+/* scanner */
+.scan{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(18,16,36,.75),rgba(10,9,22,.75));backdrop-filter:blur(8px);overflow:hidden}
+.scan form{display:flex;gap:12px;padding:22px;border-bottom:1px solid var(--line)}
+.scan input{flex:1;min-width:0;height:54px;border-radius:14px;border:1px solid var(--line2);background:rgba(7,7,15,.7);color:var(--ink);font:400 14px var(--mono);padding:0 18px;outline:none;transition:border-color .2s,box-shadow .2s}
+.scan input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(230,204,146,.12)}
+.scan .msg{padding:0 22px;min-height:0;font:400 13px var(--mono);color:var(--red)}
+.scan .msg:not(:empty){padding-top:14px}
+.scangrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.graphbox{position:relative;border-right:1px solid var(--line);min-height:460px}
+#graph{position:absolute;inset:0;width:100%;height:100%}
+.gcap{position:absolute;left:20px;right:20px;bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;font:400 12px var(--mono);color:var(--dim)}
+.gcap .lg{display:flex;gap:14px}.gcap .lg b{font-weight:400}
+.gcap .lg b:before{content:"";display:inline-block;width:14px;height:2px;margin-right:6px;vertical-align:middle;background:var(--c)}
+.tog{font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);border:1px solid var(--line2);border-radius:999px;padding:8px 14px}
+.tog[hidden]{display:none}
+.facts{display:grid;grid-template-columns:1fr 1fr}
+.fact{padding:22px 24px;border-bottom:1px solid var(--line);min-width:0}
+.fact:nth-child(odd){border-right:1px solid var(--line)}
+.fact small{display:block;font:500 10.5px var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.fact .v{font:500 26px/1.1 var(--serif);color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fact .v.m{font:400 15px/1.5 var(--mono);color:var(--gold)}
+.fact .s{font:400 12px var(--mono);color:var(--dim);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fact.wide{grid-column:1/-1;border-right:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:400 12px var(--mono);padding:6px 10px;border:1px solid var(--line2);border-radius:999px;color:var(--ink)}
+.verdict{padding:22px 24px;font:italic 400 20px/1.45 var(--serif);color:var(--ink)}
+.verdict b{font-style:normal;font-weight:600;color:var(--gold)}
+.loading .fact .v,.loading .fact .s{animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+/* problem cards */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{position:relative;border:1px solid var(--line);border-radius:24px;padding:30px 28px 32px;background:var(--card);overflow:hidden;transition:border-color .3s,transform .3s}
+.card:hover{border-color:var(--line2)}
+.card:after{content:"";position:absolute;inset:0;background:radial-gradient(320px circle at var(--mx,50%) var(--my,0%),rgba(230,204,146,.10),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover:after{opacity:1}
+.card canvas{width:100%;height:140px;display:block;margin-bottom:22px}
+.card h3{font-size:30px;margin-bottom:12px}
+.card p{color:var(--mute);font-size:15px}
+/* steps */
+.how{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px}
+.stick{position:sticky;top:110px;height:min(560px,70vh);border:1px solid var(--line);border-radius:28px;background:radial-gradient(circle at 50% 50%,rgba(40,32,90,.45),rgba(10,9,22,.6) 70%);overflow:hidden}
+#flow{width:100%;height:100%;display:block}
+.stick .lab{position:absolute;left:22px;top:20px;font:500 11px var(--mono);letter-spacing:.24em;color:var(--gold)}
+.steps{display:flex;flex-direction:column}
+.step{min-height:58vh;display:flex;flex-direction:column;justify-content:center;padding:20px 0;opacity:.35;transition:opacity .5s}
+.step.on{opacity:1}
+.step .n{font:500 13px var(--mono);color:var(--gold);letter-spacing:.2em}
+.step h3{font-size:clamp(36px,4vw,54px);margin:14px 0 16px}
+.step p{color:var(--mute);font-size:17px;max-width:460px}
+.step .tech{margin-top:16px;font:400 12px var(--mono);color:var(--dim);letter-spacing:.06em}
+/* token */
+.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-bottom:18px}
+.rule{border:1px solid var(--line);border-radius:22px;padding:28px;background:var(--card)}
+.rule .n{font:500 12px var(--mono);color:var(--gold);letter-spacing:.2em}
+.rule h3{font-size:28px;margin:14px 0 10px}
+.rule p{color:var(--mute);font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--card)}
+.stat{padding:24px;border-right:1px solid var(--line);min-width:0}
+.stat:last-child{border-right:0}
+.stat small{display:block;font:500 10.5px var(--mono);letter-spacing:.22em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
+.stat b{font:500 30px/1 var(--serif);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.src{margin-top:14px;font:400 12px var(--mono);color:var(--dim)}
+/* limits */
+.tbl{border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);border-bottom:1px solid var(--line)}
+.tr:last-child{border-bottom:0}
+.tr>div{padding:22px 26px;min-width:0}
+.tr>div:first-child{border-right:1px solid var(--line);color:var(--ink);font:500 21px/1.35 var(--serif)}
+.tr>div:last-child{color:var(--mute);font-size:15px}
+.tr.th>div{font:500 11px var(--mono)!important;letter-spacing:.24em;color:var(--gold)!important;text-transform:uppercase;padding-top:16px;padding-bottom:16px;background:rgba(230,204,146,.04)}
+/* status */
+.status{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.st{border:1px solid var(--line);border-radius:22px;padding:26px;background:var(--card)}
+.st .pill{display:inline-flex;align-items:center;gap:8px;font:500 11px var(--mono);letter-spacing:.2em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid var(--line2)}
+.st .pill:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.st h3{font-size:26px;margin:16px 0 8px}.st p{color:var(--mute);font-size:15px}
+/* faq */
+.faq{border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:24px 0;font:500 clamp(22px,2.4vw,28px)/1.25 var(--serif)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:after{content:"+";font:300 26px/1 var(--sans);color:var(--gold);transition:transform .3s}
+.faq details[open] summary:after{transform:rotate(45deg)}
+.faq details p{color:var(--mute);padding:0 0 26px;max-width:760px}
+/* footer */
+footer{position:relative;z-index:1;padding-top:140px;padding-bottom:40px;overflow:hidden}
+.bigwm{width:100%;max-width:1100px;margin:0 auto;display:block;opacity:.95}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;margin-top:56px;padding-top:24px;border-top:1px solid var(--line);font:400 12px var(--mono);color:var(--dim)}
+/* motion */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.rv.vis{opacity:1;transform:none}
+.w{display:inline-block;overflow:hidden;vertical-align:bottom;padding-bottom:.08em;margin-bottom:-.08em}
+.w>span{display:inline-block;transform:translateY(105%);transition:transform 1s cubic-bezier(.2,.75,.15,1);transition-delay:calc(var(--i)*55ms)}
+.vis .w>span,.w.vis>span{transform:none}
+.cur{position:fixed;left:0;top:0;width:34px;height:34px;margin:-17px 0 0 -17px;border:1px solid rgba(230,204,146,.6);border-radius:50%;pointer-events:none;z-index:99;transition:width .25s,height .25s,margin .25s,background .25s,opacity .3s;opacity:0;mix-blend-mode:screen}
+.cur.big{width:64px;height:64px;margin:-32px 0 0 -32px;background:rgba(230,204,146,.08)}
+@media (hover:none),(pointer:coarse){.cur{display:none}}
+@media (prefers-reduced-motion:reduce){.rv,.w>span{transition:none;opacity:1;transform:none}html{scroll-behavior:auto}}
+/* responsive */
+@media (max-width:980px){
+ .hero .wrap{grid-template-columns:minmax(0,1fr)}
+ .sealbox{justify-self:center;max-width:460px;order:-1;margin-top:8px}
+ .head{grid-template-columns:minmax(0,1fr);gap:18px}
+ .scangrid{grid-template-columns:minmax(0,1fr)}
+ .graphbox{border-right:0;border-bottom:1px solid var(--line);min-height:360px}
+ .cards,.rules,.status{grid-template-columns:minmax(0,1fr)}
+ .how{grid-template-columns:minmax(0,1fr);gap:0}
+ .stick{top:76px;height:300px;z-index:2;background:#0b0a18}
+ .step{min-height:auto;padding:48px 0;opacity:1}
+ .stats{grid-template-columns:1fr 1fr}.stat:nth-child(2){border-right:0}.stat:nth-child(-n+2){border-bottom:1px solid var(--line)}
+ nav .links{display:none}nav .snd{margin-left:auto}
+}
+@media (max-width:560px){
+ .wrap{padding-left:16px;padding-right:16px}
+ .scan form{flex-direction:column;padding:16px}.scan input{font-size:16px}.scan form .btn{justify-content:center}
+ .facts{grid-template-columns:minmax(0,1fr)}.fact:nth-child(odd){border-right:0}
+ .tr{grid-template-columns:minmax(0,1fr)}.tr>div:first-child{border-right:0;padding-bottom:6px}.tr>div:last-child{padding-top:0}.tr.th{display:none}
+ .sec{padding-top:110px}
+ .ctas .btn{flex:1;justify-content:center}
+ .gcap{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="cur" aria-hidden="true"></div>
+<nav id="nav"><div class="wrap">
+  <a href="#top" aria-label="AEON home"><span class="wm" data-wm></span></a>
+  <div class="links"><a href="#scan">Scan</a><a href="#how">How it works</a><a href="#token">$AEON</a><a href="#limits">Limits</a><a href="#faq">FAQ</a></div>
+  <button class="snd" id="snd" aria-pressed="false" aria-label="Toggle sound" title="Sound">&#9834;</button>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <div>
+    <span class="kick" data-scr>The privacy layer for Solana</span>
+    <h1 data-split>They track every wallet. <em>Not yours.</em></h1>
+    <p class="lede rv">Every buy you make is read by bots within seconds. <b>AEON breaks the link</b> between your wallet and your trades: shield your SOL, let it mix, then trade from a fresh wallet nobody has ever seen.</p>
+    <div class="ctas rv"><a class="btn gold mag" href="#scan">See what they see &rarr;</a><a class="btn line mag" href="#how">How it works</a></div>
+    <div class="ca rv"><span>CA</span><code id="ca">&mdash;</code><button id="cacopy" disabled>COPY</button></div>
+  </div>
+  <div class="sealbox rv"><canvas id="seal" aria-label="The AEON seal: a closed eye. Hover to open it."></canvas><div class="sealtip">HOVER TO OPEN THE EYE</div></div>
+</div></header>
+
+<div class="band" aria-hidden="true"><div class="row a" id="bandA"></div><div class="row b" id="bandB"></div></div>
+
+<section class="sec" id="scan"><div class="wrap">
+  <div class="head">
+    <div><span class="num">01 &mdash; WHAT THEY SEE</span><h2 data-split>Your wallet is an <em>open book.</em></h2></div>
+    <p class="rv">Paste any Solana address. This is what every copy-bot, tracker and labeler can read about it, right now, for free. Nothing here is private, which is the point.</p>
+  </div>
+  <div class="scan rv" id="scanbox">
+    <form id="scanform" autocomplete="off"><input id="addr" name="addr" placeholder="Paste a Solana wallet address" spellcheck="false" aria-label="Solana wallet address"><button class="btn gold" id="scanbtn" type="submit">Scan wallet</button></form>
+    <div class="msg" id="scanmsg" role="status"></div>
+    <div class="scangrid">
+      <div class="graphbox"><canvas id="graph" aria-label="Map of wallets linked to the scanned wallet"></canvas>
+        <div class="gcap"><div class="lg"><b style="--c:var(--gold)">sent to</b><b style="--c:var(--vio)">received from</b></div><button class="tog" id="aeonview" hidden>See it through AEON</button></div></div>
+      <div>
+        <div class="facts" id="facts">
+          <div class="fact"><small>Balance</small><div class="v" data-f="bal">&mdash;</div><div class="s" data-f="bals">SOL, live</div></div>
+          <div class="fact"><small>Transactions</small><div class="v" data-f="txs">&mdash;</div><div class="s" data-f="txss">public history</div></div>
+          <div class="fact"><small>First seen</small><div class="v" data-f="first">&mdash;</div><div class="s" data-f="firsts">&nbsp;</div></div>
+          <div class="fact"><small>Last active</small><div class="v" data-f="last">&mdash;</div><div class="s" data-f="lasts">&nbsp;</div></div>
+          <div class="fact"><small>Wallets linked</small><div class="v" data-f="links">&mdash;</div><div class="s" data-f="linkss">by direct SOL transfers</div></div>
+          <div class="fact"><small>Funded by</small><div class="v m" data-f="funder">&mdash;</div><div class="s" data-f="funders">the wallet that paid first</div></div>
+          <div class="fact wide"><small>Apps it uses</small><div class="chips" data-f="apps"><span class="chip">&mdash;</span></div></div>
+        </div>
+        <p class="verdict" id="verdict">Scan a wallet to see its trail.</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec" id="problem"><div class="wrap">
+  <div class="head">
+    <div><span class="num">02 &mdash; THE TRENCHES HAVE EYES</span><h2 data-split>Three ways your trail <em>costs you.</em></h2></div>
+    <p class="rv">None of this needs hacking. It's all public data, read by software that never sleeps.</p>
+  </div>
+  <div class="cards">
+    <article class="card rv"><canvas data-viz="copy"></canvas><h3>Copied</h3><p>Copy-bots follow wallets that win. The moment you buy, they buy behind you, and your edge is gone before your transaction settles.</p></article>
+    <article class="card rv"><canvas data-viz="sand"></canvas><h3>Sandwiched</h3><p>Bots see your swap before it lands, buy first and sell into you. You get a worse price, and they keep the difference.</p></article>
+    <article class="card rv"><canvas data-viz="label"></canvas><h3>Labeled</h3><p>Trackers tag wallets as dev, sniper, whale or insider. The label follows you forever, and everyone you trade against can read it.</p></article>
+  </div>
+</div></section>
+
+<section class="sec" id="how"><div class="wrap">
+  <div class="head">
+    <div><span class="num">03 &mdash; HOW AEON WORKS</span><h2 data-split>Four steps out of <em>sight.</em></h2></div>
+    <p class="rv">AEON is a shielded layer built on encrypted computation. Funds go in under one name and come out under another, with nothing on-chain to tie them together.</p>
+  </div>
+  <div class="how">
+    <div class="stick"><canvas id="flow"></canvas><span class="lab" id="flowlab">01 · SHIELD</span></div>
+    <div class="steps">
+      <div class="step" data-step="0"><span class="n">01</span><h3>Shield</h3><p>Deposit SOL into a shielded balance. Amounts and ownership are encrypted, so trackers watching the pool see a deposit, not a person.</p><p class="tech">ARCIUM ENCRYPTED COMPUTE · SHIELDED BALANCE</p></div>
+      <div class="step" data-step="1"><span class="n">02</span><h3>Mix</h3><p>Your funds sit among everyone else's. Withdrawals leave after a random delay and in common amounts, because the same amount out right away would give you away.</p><p class="tech">RANDOM DELAY · SPLIT AMOUNTS · SHARED POOL</p></div>
+      <div class="step" data-step="2"><span class="n">03</span><h3>Emerge</h3><p>Funds come out in a brand-new one-time wallet. No history, no labels, no funding trail back to you.</p><p class="tech">ONE-TIME WALLET · NO FUNDING LINK</p></div>
+      <div class="step" data-step="3"><span class="n">04</span><h3>Trade</h3><p>Buy and sell from the fresh wallet through Jupiter or the pump.fun curve. Bots see a stranger, so there's nothing to copy and nothing to label.</p><p class="tech">JUPITER ROUTING · PUMP.FUN CURVE</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec" id="token"><div class="wrap">
+  <div class="head">
+    <div><span class="num">04 &mdash; $AEON</span><h2 data-split>The toll, and <em>the fire.</em></h2></div>
+    <p class="rv">$AEON has one job: it is burned by every private trade. The more the layer is used, the less $AEON exists.</p>
+  </div>
+  <div class="rules">
+    <div class="rule rv"><span class="n">01</span><h3>Every crossing pays a toll</h3><p>Each private trade through the layer pays a small fee. Rates are published with the contract before the pool opens.</p></div>
+    <div class="rule rv"><span class="n">02</span><h3>The toll buys and burns</h3><p>Fees buy $AEON on the open market and burn it. Every burn is an on-chain transaction anyone can check.</p></div>
+    <div class="rule rv"><span class="n">03</span><h3>Holders pay less</h3><p>Holding $AEON lowers your toll, so the people who use the layer most have a reason to hold the token.</p></div>
+  </div>
+  <div class="stats rv">
+    <div class="stat"><small>Price</small><b data-m="price">&mdash;</b></div>
+    <div class="stat"><small>Market cap</small><b data-m="mcap">&mdash;</b></div>
+    <div class="stat"><small>24h volume</small><b data-m="vol">&mdash;</b></div>
+    <div class="stat"><small>Liquidity</small><b data-m="liq">&mdash;</b></div>
+  </div>
+  <p class="src" id="msrc">Live market data appears here once the contract is posted. A dash means no data yet, never zero.</p>
+</div></section>
+
+<section class="sec" id="limits"><div class="wrap">
+  <div class="head">
+    <div><span class="num">05 &mdash; HONEST LIMITS</span><h2 data-split>What it cannot do, <em>and so.</em></h2></div>
+    <p class="rv">Privacy tools fail when they oversell. Here is exactly where AEON stops, and what we do about it.</p>
+  </div>
+  <div class="tbl rv">
+    <div class="tr th"><div>It cannot</div><div>So it</div></div>
+    <div class="tr"><div>Hide you in an empty pool.</div><div>Shows the pool size live, so you can judge your cover before you cross. Privacy grows with every user.</div></div>
+    <div class="tr"><div>Stop you from linking yourself.</div><div>Warns you before you send from a fresh wallet back to your old one, which would undo everything.</div></div>
+    <div class="tr"><div>Promise "untraceable".</div><div>Says "unlinked". Timing and amounts can still leak if you rush, which is why withdrawals wait.</div></div>
+    <div class="tr"><div>Run on battle-tested privacy tech yet.</div><div>Starts with low deposit caps, because Arcium's encrypted compute is still young. Caps rise as it proves itself.</div></div>
+    <div class="tr"><div>Serve sanctioned wallets.</div><div>Screens deposits, so the pool stays clean for everyone in it.</div></div>
+  </div>
+</div></section>
+
+<section class="sec" id="status"><div class="wrap">
+  <div class="head">
+    <div><span class="num">06 &mdash; WHAT'S LIVE</span><h2 data-split>Where things <em>stand.</em></h2></div>
+    <p class="rv">No dates we can't keep. This list changes when the thing actually ships.</p>
+  </div>
+  <div class="status">
+    <div class="st rv"><span class="pill" style="--c:var(--ok)">Live</span><h3>Wallet scanner</h3><p>The scanner above runs on public Solana data. Use it on any wallet, including your own.</p></div>
+    <div class="st rv"><span class="pill" style="--c:var(--gold)">At launch</span><h3>$AEON</h3><p>The token, its contract and live market data. The contract appears at the top of this page.</p></div>
+    <div class="st rv"><span class="pill" style="--c:var(--vio)">In development</span><h3>The shielded pool</h3><p>Shield, mix, emerge, trade. It opens after review, with low caps first.</p></div>
+  </div>
+</div></section>
+
+<section class="sec" id="faq"><div class="wrap">
+  <div class="head"><div><span class="num">07 &mdash; QUESTIONS</span><h2 data-split>Asked in <em>the dark.</em></h2></div></div>
+  <div class="faq rv">
+    <details><summary>Is AEON a mixer?</summary><p>It's a shielded balance, which is close. The difference is that balances stay encrypted while they're in the layer, so you can wait, split and withdraw on your own schedule instead of sending a fixed amount through a fixed pipe.</p></details>
+    <details><summary>Does AEON hold my funds?</summary><p>It's designed so it can't. Funds sit in an on-chain program, and only your key can move them. No team wallet can spend them.</p></details>
+    <details><summary>What tech is it built on?</summary><p>Arcium's encrypted compute network handles the private balances. Trades from fresh wallets route through Jupiter or the pump.fun bonding curve like any other wallet.</p></details>
+    <details><summary>Is privacy legal?</summary><p>Financial privacy is normal: your bank balance isn't public. AEON screens deposits against sanctions lists and doesn't serve flagged wallets. Check the rules where you live.</p></details>
+    <details><summary>What does the scanner do with my address?</summary><p>It reads public data from a Solana RPC and shows it to you. Nothing is stored, and no wallet connection is needed.</p></details>
+    <details><summary>When can I use the layer?</summary><p>When the status above says live. We'd rather ship it late than ship it leaky.</p></details>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span class="bigwm" data-wm data-big></span>
+  <div class="foot"><span>AEON · the privacy layer for Solana</span><span>Nothing here is financial advice. Crypto is risky.</span></div>
+</div></footer>
+<script>
+(function () {
+"use strict";
+var $ = function (s, r) { return (r || document).querySelector(s); }, $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var RM = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+var FINE = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
+var DPR = Math.min(window.devicePixelRatio || 1, 2);
+var TAU = Math.PI * 2;
+var pointer = { x: innerWidth / 2, y: innerHeight / 2, on: false };
+addEventListener("pointermove", function (e) { pointer.x = e.clientX; pointer.y = e.clientY; pointer.on = true; }, { passive: true });
+
+function fit(c) {
+  var r = c.getBoundingClientRect(), w = Math.max(1, Math.round(r.width * DPR)), h = Math.max(1, Math.round(r.height * DPR));
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+  return { w: r.width, h: r.height };
+}
+function visible(el, cb) {
+  if (!("IntersectionObserver" in window)) { cb(true); return; }
+  new IntersectionObserver(function (es) { es.forEach(function (e) { cb(e.isIntersecting); }); }, { rootMargin: "120px" }).observe(el);
+}
+function loop(fn, fps) {
+  var last = 0, gap = 1000 / (fps || 30), on = true, raf = 0;
+  function tick(t) { raf = requestAnimationFrame(tick); if (!on || document.hidden || t - last < gap) return; last = t; fn(t / 1000); }
+  raf = requestAnimationFrame(tick);
+  return function (v) { on = v; };
+}
+function star4(g, x, y, r) {
+  g.beginPath();
+  for (var k = 0; k < 8; k++) { var a = k * Math.PI / 4, rr = k % 2 ? r * 0.18 : r; g[k ? "lineTo" : "moveTo"](x + rr * Math.cos(a), y + rr * Math.sin(a)); }
+  g.closePath(); g.fill();
+}
+function ease(x) { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); }
+function short(a) { return a ? a.slice(0, 4) + "…" + a.slice(-4) : "—"; }
+
+/* ---------- wordmark: Λ ≡ ⦵ N, drawn not typed ---------- */
+function wordmarkSVG(sw) {
+  var h = 66, g = 0.62 * h, wA = 0.92 * h, wE = 0.70 * h, wO = h, wN = 0.80 * h, x = 0, p = [];
+  p.push('<path d="M' + x + ' ' + h + 'L' + (x + wA / 2) + ' 0L' + (x + wA) + ' ' + h + '" fill="none"/>');
+  var sx = x + wA / 2, sy = h * 0.70, r = h * 0.09, pts = [];
+  for (var k = 0; k < 8; k++) { var a = k * Math.PI / 4, rr = k % 2 ? r * 0.18 : r; pts.push((sx + rr * Math.cos(a)).toFixed(2) + "," + (sy + rr * Math.sin(a)).toFixed(2)); }
+  p.push('<polygon points="' + pts.join(" ") + '" stroke="none" fill="url(#wg)"/>');
+  x += wA + g;
+  p.push('<path d="M' + x + ' ' + sw / 2 + 'H' + (x + wE) + 'M' + x + ' ' + h / 2 + 'H' + (x + wE * 0.82) + 'M' + x + ' ' + (h - sw / 2) + 'H' + (x + wE) + '" fill="none"/>');
+  x += wE + g;
+  p.push('<circle cx="' + (x + wO / 2) + '" cy="' + h / 2 + '" r="' + (h / 2 - sw / 2) + '" fill="none"/>');
+  p.push('<path d="M' + (x - h * 0.18) + ' ' + h / 2 + 'H' + (x + wO + h * 0.18) + '" fill="none" stroke-width="' + sw * 0.55 + '"/>');
+  x += wO + g;
+  p.push('<path d="M' + x + ' ' + h + 'V0L' + (x + wN) + ' ' + h + 'V0" fill="none" stroke-linejoin="miter"/>');
+  x += wN;
+  var pad = sw + h * 0.2;
+  return '<svg viewBox="' + (-pad) + ' ' + (-sw) + ' ' + (x + pad * 2) + ' ' + (h + sw * 2) + '" width="100%" role="img" aria-label="AEON"><defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbeec6"/><stop offset=".5" stop-color="#e6cc92"/><stop offset="1" stop-color="#bf8f4c"/></linearGradient></defs><g stroke="url(#wg)" stroke-width="' + sw + '" stroke-linecap="square">' + p.join("") + '</g></svg>';
+}
+$$("[data-wm]").forEach(function (el) { el.innerHTML = wordmarkSVG(el.hasAttribute("data-big") ? 2.2 : 4.2); });
+
+/* ---------- sky: stars + gold dust ---------- */
+(function () {
+  var c = $("#sky"), g = c.getContext("2d"), S = [], D = [], W = 0, H = 0;
+  function seed() {
+    var s = fit(c); W = s.w; H = s.h; S = []; D = [];
+    var n = Math.round(W * H / 5200);
+    for (var i = 0; i < n; i++) S.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() < 0.08 ? 1.3 : 0.7, p: Math.random() * TAU, b: 0.25 + Math.random() * 0.6 });
+    var m = W < 700 ? 26 : 54;
+    for (var j = 0; j < m; j++) D.push({ x: Math.random() * W, y: Math.random() * H, v: 0.08 + Math.random() * 0.25, r: 0.6 + Math.random() * 1.6, p: Math.random() * TAU });
+  }
+  seed(); addEventListener("resize", seed);
+  function draw(t) {
+    g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, W, H);
+    var grd = g.createRadialGradient(W * 0.7, H * 0.25, 0, W * 0.7, H * 0.25, Math.max(W, H) * 0.8);
+    grd.addColorStop(0, "rgba(50,40,110,0.28)"); grd.addColorStop(1, "rgba(7,7,15,0)");
+    g.fillStyle = grd; g.fillRect(0, 0, W, H);
+    var sy = (window.scrollY || 0) * 0.04;
+    for (var i = 0; i < S.length; i++) { var s = S[i], a = s.b * (0.55 + 0.45 * Math.sin(t * 1.3 + s.p)); g.fillStyle = "rgba(238,230,214," + a + ")"; g.fillRect(s.x, (s.y - sy + H) % H, s.r, s.r); }
+    for (var j = 0; j < D.length; j++) {
+      var d = D[j]; d.y -= d.v; d.x += Math.sin(t * 0.4 + d.p) * 0.15; if (d.y < -4) { d.y = H + 4; d.x = Math.random() * W; }
+      g.fillStyle = "rgba(230,204,146," + (0.25 + 0.25 * Math.sin(t + d.p)) + ")"; g.beginPath(); g.arc(d.x, d.y, d.r, 0, TAU); g.fill();
+    }
+  }
+  if (RM) draw(0); else loop(draw, 25);
+})();
+
+/* ---------- the seal: a closed eye that opens ---------- */
+var Seal = (function () {
+  var c = $("#seal"), g = c.getContext("2d"), W = 0, t0 = performance.now() / 1000;
+  var st = { op: 0, target: 0, hover: false, hold: 0, lookX: 0, lookY: 0, focus: null, flare: 0 };
+  function lids(cx, cy, R, op) {
+    var ew = R * 0.40, dep = R * 0.13, lo = [], up = [];
+    for (var i = 0; i <= 40; i++) { var t = i / 20 - 1; lo.push([cx + ew * t, cy + dep * (1 - t * t)]); up.push([cx + ew * t, cy + dep * (1 - t * t) * (1 - 2.25 * op)]); }
+    return [lo, up];
+  }
+  function path(pts) { g.beginPath(); pts.forEach(function (p, i) { g[i ? "lineTo" : "moveTo"](p[0], p[1]); }); }
+  function draw(now) {
+    var s = fit(c); W = s.w; var t = now - t0;
+    g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, W, W);
+    var cx = W / 2, cy = W / 2, R = W * 0.43, intro = RM ? 1 : ease(t / 1.6);
+    // eye state machine: opens once after the intro, then follows hover / focus
+    var want = st.hover || st.focus ? 1 : (t > 1.7 && t < 3.6 ? 1 : 0);
+    if (st.hold > now) want = 1;
+    st.op += (want - st.op) * (RM ? 1 : 0.09);
+    var op = st.op;
+    var gold = g.createLinearGradient(cx - R, cy - R, cx + R, cy + R);
+    gold.addColorStop(0, "#fbeec6"); gold.addColorStop(0.5, "#e6cc92"); gold.addColorStop(1, "#bf8f4c");
+    // glow behind
+    var hg = g.createRadialGradient(cx, cy, 0, cx, cy, R * 1.15);
+    hg.addColorStop(0, "rgba(255,220,150," + (0.16 + 0.12 * op) + ")"); hg.addColorStop(0.35, "rgba(120,100,255,0.12)"); hg.addColorStop(1, "rgba(7,7,15,0)");
+    g.fillStyle = hg; g.fillRect(0, 0, W, W);
+    g.strokeStyle = gold; g.fillStyle = gold; g.lineCap = "round";
+    var lw = Math.max(1, W / 380), rot = t * 0.035;
+    function ring(r, w, k) { g.lineWidth = w; g.beginPath(); g.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + TAU * Math.min(1, Math.max(0, intro * 1.25 - k))); g.stroke(); }
+    ring(R, lw * 1.3, 0); ring(R * 0.935, lw * 0.7, 0.05); ring(R * 0.62, lw * 1.1, 0.12); ring(R * 0.585, lw * 0.6, 0.18);
+    g.globalAlpha = intro;
+    for (var k = 0; k < 120; k++) {
+      var a = k / 120 * TAU + rot, L = k % 10 === 0 ? 0.885 : k % 5 === 0 ? 0.905 : 0.918;
+      g.lineWidth = k % 10 === 0 ? lw * 0.9 : lw * 0.5; g.beginPath(); g.moveTo(cx + R * 0.935 * Math.cos(a), cy + R * 0.935 * Math.sin(a)); g.lineTo(cx + R * L * Math.cos(a), cy + R * L * Math.sin(a)); g.stroke();
+    }
+    for (var j = 0; j < 36; j++) {
+      var b = j / 36 * TAU - rot * 0.5 + Math.PI / 36, r1 = j % 3 === 0 ? 0.84 : 0.76;
+      g.lineWidth = lw * 0.55; g.beginPath(); g.moveTo(cx + R * 0.66 * Math.cos(b), cy + R * 0.66 * Math.sin(b)); g.lineTo(cx + R * r1 * Math.cos(b), cy + R * r1 * Math.sin(b)); g.stroke();
+    }
+    for (var q = 0; q < 4; q++) { var c4 = q * Math.PI / 2 - Math.PI / 2 + rot; star4(g, cx + R * Math.cos(c4), cy + R * Math.sin(c4), R * 0.075); }
+    star4(g, cx, cy - R * 0.36, R * 0.05);
+    g.beginPath(); g.arc(cx, cy + R * 0.36, R * 0.012, 0, TAU); g.fill();
+    // horizon through the eye
+    g.lineWidth = lw * 0.8; g.globalAlpha = intro * (1 - op * 0.85);
+    g.beginPath(); g.moveTo(cx - R * 0.56, cy); g.lineTo(cx + R * 0.56, cy); g.stroke();
+    g.globalAlpha = intro;
+    // light under the lid (closed) or from the iris (open)
+    g.save(); g.globalCompositeOperation = "lighter";
+    var lg = g.createRadialGradient(cx, cy + R * 0.08 * (1 - op), 0, cx, cy, R * 0.6);
+    lg.addColorStop(0, "rgba(255,226,160," + (0.55 * intro) + ")"); lg.addColorStop(1, "rgba(255,226,160,0)");
+    g.strokeStyle = lg; g.lineWidth = lw * 0.6;
+    for (var rr = 0; rr < 46; rr++) {
+      var ang = op > 0.5 ? rr / 46 * TAU + t * 0.05 : Math.PI * (0.06 + 0.88 * rr / 45);
+      var r0 = op > 0.5 ? R * 0.13 : R * 0.05, rl = R * (0.42 + 0.12 * Math.sin(rr * 7.3 + t * 1.2));
+      g.beginPath(); g.moveTo(cx + r0 * Math.cos(ang), cy + R * 0.06 * (1 - op) + r0 * Math.sin(ang)); g.lineTo(cx + rl * Math.cos(ang), cy + rl * Math.sin(ang)); g.stroke();
+    }
+    g.restore();
+    // lids
+    var L2 = lids(cx, cy, R, op), lo = L2[0], up = L2[1];
+    if (op > 0.02) {
+      g.save(); path(up.concat(lo.slice().reverse())); g.closePath(); g.fillStyle = "rgba(7,7,15," + (0.75 * op) + ")"; g.fill(); g.clip();
+      var ix = cx + st.lookX * R * 0.16, iy = cy + st.lookY * R * 0.05, ri = R * 0.118;
+      var ig = g.createRadialGradient(ix, iy, 0, ix, iy, ri * 1.6);
+      ig.addColorStop(0, "rgba(255,236,190," + op + ")"); ig.addColorStop(0.5, "rgba(230,204,146," + (0.35 * op) + ")"); ig.addColorStop(1, "rgba(230,204,146,0)");
+      g.fillStyle = ig; g.fillRect(cx - R, cy - R, R * 2, R * 2);
+      g.strokeStyle = gold; g.lineWidth = lw * 1.2; g.globalAlpha = op;
+      g.beginPath(); g.arc(ix, iy, ri, 0, TAU); g.stroke();
+      g.lineWidth = lw * 0.6; g.beginPath(); g.arc(ix, iy, ri * 0.62, 0, TAU); g.stroke();
+      for (var u = 0; u < 16; u++) { var ua = u / 16 * TAU + t * 0.3; g.beginPath(); g.moveTo(ix + ri * 0.66 * Math.cos(ua), iy + ri * 0.66 * Math.sin(ua)); g.lineTo(ix + ri * 0.9 * Math.cos(ua), iy + ri * 0.9 * Math.sin(ua)); g.stroke(); }
+      g.fillStyle = "#fff6e0"; star4(g, ix, iy, ri * 0.42);
+      g.restore(); g.globalAlpha = intro;
+    }
+    g.strokeStyle = "#fff4dc"; g.lineWidth = lw * 1.7; g.shadowColor = "rgba(255,214,140,.9)"; g.shadowBlur = 14;
+    path(lo); g.stroke(); path(up); g.stroke(); g.shadowBlur = 0;
+    g.strokeStyle = gold; g.lineWidth = lw * 0.6;
+    var cp = []; for (var n = 0; n <= 30; n++) { var tt = n / 15 - 1; cp.push([cx + R * 0.40 * 0.78 * tt, cy - R * 0.055 - R * (0.075 + 0.09 * op) * (1 - tt * tt)]); }
+    path(cp); g.stroke();
+    var sg = 1 - 2 * op;
+    for (var l = -3; l <= 3; l++) {
+      var lt = l / 4, idx = Math.round((lt + 1) * 20), px = up[idx][0], py = up[idx][1];
+      var la = sg >= 0 ? Math.PI / 2 - lt * 0.7 : -Math.PI / 2 + lt * 0.7, ll = R * 0.07 * (1 - 0.25 * Math.abs(lt)) * Math.abs(sg);
+      if (ll > 0.5) { g.beginPath(); g.moveTo(px, py); g.lineTo(px + ll * Math.cos(la), py + ll * Math.sin(la)); g.stroke(); }
+    }
+    g.globalAlpha = 1;
+    // look toward pointer (or the scanned graph)
+    var r = c.getBoundingClientRect(), tx = 0, ty = 0;
+    if (st.focus) { var fr = st.focus.getBoundingClientRect(); tx = (fr.left + fr.width / 2) - (r.left + r.width / 2); ty = (fr.top + fr.height / 2) - (r.top + r.height / 2); }
+    else if (pointer.on) { tx = pointer.x - (r.left + r.width / 2); ty = pointer.y - (r.top + r.height / 2); }
+    var dn = Math.hypot(tx, ty) || 1, k2 = Math.min(1, dn / 400);
+    st.lookX += (tx / dn * k2 - st.lookX) * 0.12; st.lookY += (ty / dn * k2 - st.lookY) * 0.12;
+  }
+  var run = RM ? null : loop(draw, 40);
+  if (RM) { draw(performance.now() / 1000); addEventListener("resize", function () { draw(performance.now() / 1000); }); }
+  if (run) visible(c, run);
+  c.addEventListener("pointerenter", function () { st.hover = true; });
+  c.addEventListener("pointerleave", function () { st.hover = false; });
+  c.addEventListener("click", function () { st.hold = performance.now() / 1000 + 2.4; Sound.chime(); });
+  return {
+    watch: function (el, secs) { st.focus = el; clearTimeout(st._f); st._f = setTimeout(function () { st.focus = null; }, (secs || 4) * 1000); },
+    redraw: function () { if (RM) draw(performance.now() / 1000); }
+  };
+})();
+
+if (!FINE) { var tip = $(".sealtip"); if (tip) tip.textContent = "TAP TO OPEN THE EYE"; }
+/* ---------- sound: a quiet pad, off by default ---------- */
+var Sound = (function () {
+  var ctx = null, master = null, on = false, btn = $("#snd");
+  function start() {
+    var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    ctx = new AC(); master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+    var lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 900; lp.connect(master);
+    [110, 164.81, 220.5, 329.6].forEach(function (f, i) {
+      var o = ctx.createOscillator(), gg = ctx.createGain(); o.type = i % 2 ? "triangle" : "sine"; o.frequency.value = f; o.detune.value = (i - 1.5) * 6;
+      gg.gain.value = 0.05 / (i + 1); o.connect(gg); gg.connect(lp); o.start();
+      var lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = 0.07 + i * 0.03; lg.gain.value = 0.02 / (i + 1); lfo.connect(lg); lg.connect(gg.gain); lfo.start();
+    });
+    return true;
+  }
+  btn.addEventListener("click", function () {
+    if (!ctx && !start()) return;
+    on = !on; btn.setAttribute("aria-pressed", on);
+    if (ctx.state === "suspended") ctx.resume();
+    master.gain.cancelScheduledValues(ctx.currentTime); master.gain.linearRampToValueAtTime(on ? 0.5 : 0, ctx.currentTime + 1.2);
+  });
+  return {
+    chime: function () {
+      if (!on || !ctx) return;
+      [880, 1318.5].forEach(function (f, i) {
+        var o = ctx.createOscillator(), gg = ctx.createGain(); o.type = "sine"; o.frequency.value = f;
+        gg.gain.setValueAtTime(0, ctx.currentTime); gg.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.02 + i * 0.06); gg.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
+        o.connect(gg); gg.connect(master); o.start(); o.stop(ctx.currentTime + 2);
+      });
+    }
+  };
+})();
+
+/* ---------- type motion: split headings, scramble kickers, reveals ---------- */
+$$("[data-split]").forEach(function (h) {
+  var i = 0;
+  function walk(node) {
+    Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+      if (n.nodeType === 3) {
+        var frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach(function (w) {
+          if (!w) return;
+          if (/^\s+$/.test(w)) { frag.appendChild(document.createTextNode(" ")); return; }
+          var o = document.createElement("span"); o.className = "w"; var s = document.createElement("span"); s.style.setProperty("--i", i++); s.textContent = w; o.appendChild(s); frag.appendChild(o);
+        });
+        n.parentNode.replaceChild(frag, n);
+      } else if (n.nodeType === 1) walk(n);
+    });
+  }
+  walk(h); h.classList.add("rv");
+});
+var GL = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789✦";
+function scramble(el) {
+  var txt = el.getAttribute("data-txt") || el.textContent; el.setAttribute("data-txt", txt);
+  if (RM) { el.textContent = txt; return; }
+  var f = 0, N = 22;
+  (function step() {
+    el.textContent = txt.split("").map(function (ch, i) { return ch === " " || i < f / N * txt.length ? ch : GL[(Math.random() * GL.length) | 0]; }).join("");
+    if (++f <= N) setTimeout(step, 34); else el.textContent = txt;
+  })();
+}
+var io = "IntersectionObserver" in window ? new IntersectionObserver(function (es) {
+  es.forEach(function (e) {
+    if (!e.isIntersecting) return; e.target.classList.add("vis"); io.unobserve(e.target);
+    if (e.target.hasAttribute("data-scr")) scramble(e.target);
+    $$("[data-scr]", e.target).forEach(scramble);
+  });
+}, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }) : null;
+$$(".rv,[data-scr],.num").forEach(function (el) { if (io) io.observe(el); else el.classList.add("vis"); });
+$$(".num").forEach(function (n) { n.setAttribute("data-scr", ""); });
+function sweep() { $$(".rv:not(.vis)").forEach(function (el) { if (el.getBoundingClientRect().top < innerHeight * 0.95) el.classList.add("vis"); }); }
+addEventListener("load", sweep); var swT = 0; addEventListener("scroll", function () { if (swT) return; swT = setTimeout(function () { swT = 0; sweep(); }, 200); }, { passive: true }); addEventListener("hashchange", function () { setTimeout(sweep, 60); });
+
+/* ---------- nav, band, cursor, magnets, card light ---------- */
+var nav = $("#nav");
+var A = $("#bandA"), B = $("#bandB");
+var words = ["Shield", "Mix", "Emerge", "Trade", "Unseen", "Unlinked"];
+function fill(el, rev) { var w = rev ? words.slice().reverse() : words, h = ""; for (var r = 0; r < 4; r++) w.forEach(function (x) { h += "<span>" + x + "</span><i>✦</i>"; }); el.innerHTML = h; }
+fill(A); fill(B, true);
+var bx = 0, lastY = scrollY, vel = 0;
+(function band() {
+  requestAnimationFrame(band);
+  var y = scrollY; vel += ((y - lastY) - vel) * 0.15; lastY = y;
+  nav.classList.toggle("solid", y > 40);
+  if (RM) return;
+  bx += 0.4 + Math.abs(vel) * 0.25;
+  var wa = A.scrollWidth / 2 || 1, sk = Math.max(-8, Math.min(8, vel * 0.25));
+  A.style.transform = "translateX(" + (-(bx % wa)) + "px) skewX(" + (-sk) + "deg)";
+  B.style.transform = "translateX(" + (-(wa - (bx % wa))) + "px) skewX(" + sk + "deg)";
+})();
+if (FINE && !RM) {
+  var cur = $(".cur"), cx = 0, cy = 0;
+  (function c() { requestAnimationFrame(c); cx += (pointer.x - cx) * 0.2; cy += (pointer.y - cy) * 0.2; cur.style.transform = "translate(" + cx + "px," + cy + "px)"; cur.style.opacity = pointer.on ? 1 : 0; })();
+  $$("a,button,summary,input,#seal").forEach(function (el) { el.addEventListener("pointerenter", function () { cur.classList.add("big"); }); el.addEventListener("pointerleave", function () { cur.classList.remove("big"); }); });
+  $$(".mag").forEach(function (b) {
+    b.addEventListener("pointermove", function (e) { var r = b.getBoundingClientRect(); b.style.transform = "translate(" + (e.clientX - r.left - r.width / 2) * 0.18 + "px," + (e.clientY - r.top - r.height / 2) * 0.3 + "px)"; });
+    b.addEventListener("pointerleave", function () { b.style.transform = ""; });
+  });
+}
+$$(".card").forEach(function (c) { c.addEventListener("pointermove", function (e) { var r = c.getBoundingClientRect(); c.style.setProperty("--mx", (e.clientX - r.left) + "px"); c.style.setProperty("--my", (e.clientY - r.top) + "px"); }); });
+
+/* ---------- problem visuals ---------- */
+$$("[data-viz]").forEach(function (c) {
+  var g = c.getContext("2d"), kind = c.getAttribute("data-viz");
+  function draw(t) {
+    var s = fit(c), W = s.w, H = s.h; g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, W, H);
+    g.font = "500 10px JetBrains Mono, monospace"; g.textBaseline = "middle";
+    if (kind === "copy") {
+      var p = (t * 0.35) % 1, y = H / 2;
+      g.strokeStyle = "rgba(230,204,146,.18)"; g.beginPath(); g.moveTo(10, y); g.lineTo(W - 10, y); g.stroke();
+      var you = 20 + p * (W - 60);
+      g.fillStyle = "#e6cc92"; g.beginPath(); g.arc(you, y, 6, 0, TAU); g.fill(); g.fillText("YOU", you - 10, y - 18);
+      for (var k = 1; k <= 3; k++) { var bxp = you - k * 26; if (bxp < 10) continue; g.fillStyle = "rgba(255,123,116," + (0.9 - k * 0.2) + ")"; g.beginPath(); g.arc(bxp, y, 4.5, 0, TAU); g.fill(); }
+      g.fillStyle = "rgba(255,123,116,.8)"; g.fillText("COPY-BOTS", Math.max(10, you - 96), y + 20);
+    } else if (kind === "sand") {
+      var ph = (t * 0.5) % 1, base = H * 0.72, x0 = 20, x1 = W - 20;
+      g.strokeStyle = "rgba(230,204,146,.25)"; g.beginPath();
+      for (var i = 0; i <= 60; i++) { var xx = x0 + (x1 - x0) * i / 60, bump = i > 20 && i < 40 ? Math.sin((i - 20) / 20 * Math.PI) * H * 0.4 * ease(ph * 3) : 0; g[i ? "lineTo" : "moveTo"](xx, base - bump - i * 0.4); }
+      g.stroke();
+      [["BOT BUY", 0.18, "rgba(255,123,116,.9)", 0], ["YOUR BUY", 0.5, "#e6cc92", 1], ["BOT SELL", 0.82, "rgba(255,123,116,.9)", 0]].forEach(function (b, j) {
+        var vis = ph * 3 > j * 0.6 ? 1 : 0.15; g.globalAlpha = vis; var bx2 = x0 + (x1 - x0) * b[1], tw2 = g.measureText(b[0]).width, ly2 = b[3] ? 46 : 26;
+        g.fillStyle = b[2]; g.fillRect(bx2 - 3, ly2 - 16, 6, 6); g.fillText(b[0], Math.max(2, Math.min(W - tw2 - 2, bx2 - tw2 / 2)), ly2); g.globalAlpha = 1;
+      });
+    } else {
+      var cxl = W / 2, cyl = H / 2 + 6;
+      g.fillStyle = "#e6cc92"; g.beginPath(); g.arc(cxl, cyl, 7, 0, TAU); g.fill();
+      ["DEV", "SNIPER", "WHALE", "INSIDER"].forEach(function (lb, j) {
+        var a = j / 4 * TAU + t * 0.25, rr = Math.min(W, H) * 0.36, lx = cxl + rr * 1.6 * Math.cos(a), ly = cyl + rr * Math.sin(a);
+        var on = (Math.floor(t * 1.2) % 4) === j;
+        g.strokeStyle = on ? "rgba(255,123,116,.9)" : "rgba(230,204,146,.2)"; g.beginPath(); g.moveTo(cxl, cyl); g.lineTo(lx, ly); g.stroke();
+        g.fillStyle = on ? "rgba(255,123,116,1)" : "rgba(155,148,171,.8)"; var tw = g.measureText(lb).width; g.fillText(lb, lx - tw / 2, ly);
+      });
+    }
+  }
+  if (RM) { draw(1.2); return; }
+  var run = loop(draw, 30); visible(c, run);
+});
+
+/* ---------- how it works: one simulation, four moods ---------- */
+(function () {
+  var c = $("#flow"), g = c.getContext("2d"), lab = $("#flowlab"), mode = 0, P = [], NAMES = ["01 · SHIELD", "02 · MIX", "03 · EMERGE", "04 · TRADE"];
+  for (var i = 0; i < 46; i++) P.push({ a: Math.random() * TAU, r: 0.2 + Math.random() * 0.7, s: (0.2 + Math.random() * 0.5) * (Math.random() < 0.5 ? -1 : 1) });
+  var you = { x: -1, y: 0, k: 0 }, fresh = { k: 0 };
+  function draw(t) {
+    var s = fit(c), W = s.w, H = s.h, cx = W / 2, cy = H / 2, R = Math.min(W * 0.27, H * 0.32);
+    g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, W, H);
+    g.strokeStyle = "rgba(230,204,146,.55)"; g.lineWidth = 1.2; g.beginPath(); g.arc(cx, cy, R, 0, TAU); g.stroke();
+    g.strokeStyle = "rgba(230,204,146,.18)"; g.beginPath(); g.arc(cx, cy, R * 1.12, 0, TAU); g.stroke();
+    g.font = "500 10px JetBrains Mono, monospace"; g.textBaseline = "middle";
+    // pool
+    P.forEach(function (p) { p.a += p.s * 0.01 * (mode >= 1 ? 1.6 : 0.6); var x = cx + Math.cos(p.a) * R * p.r, y = cy + Math.sin(p.a) * R * p.r * 0.9; g.fillStyle = "rgba(139,123,255,.75)"; g.beginPath(); g.arc(x, y, 2.4, 0, TAU); g.fill(); });
+    // you: tracked outside, then absorbed
+    var target = mode === 0 ? 0.25 : 1; you.k += (target - you.k) * 0.04;
+    var yx = cx - R * 1.5 + you.k * R * 1.5, yy = cy;
+    var yAlpha = mode >= 1 ? Math.max(0, 1 - (you.k - 0.98) * 50) : 1;
+    if (mode <= 1 && yAlpha > 0.02) {
+      g.globalAlpha = mode === 0 ? 1 : yAlpha;
+      for (var e = 0; e < 3; e++) { var ex = cx - R * 1.75, ey = cy + (e - 1) * R * 0.7; g.strokeStyle = "rgba(255,123,116," + (mode === 0 ? 0.5 * (1 - Math.max(0, you.k - 0.4) * 1.7) : 0) + ")"; g.setLineDash([3, 4]); g.beginPath(); g.moveTo(ex, ey); g.lineTo(yx, yy); g.stroke(); g.setLineDash([]); g.fillStyle = "rgba(255,123,116,.8)"; g.fillRect(ex - 3, ey - 3, 6, 6); }
+      g.fillStyle = "#e6cc92"; g.beginPath(); g.arc(yx, yy, 6, 0, TAU); g.fill(); g.fillText("YOUR WALLET", Math.max(4, yx - 34), yy - 18);
+      g.globalAlpha = 1;
+    }
+    if (mode === 1) { g.fillStyle = "rgba(239,233,218,.7)"; g.fillText("WHICH ONE IS YOU?", cx - 52, cy + R + 26); }
+    // fresh wallet emerges
+    var ft = mode >= 2 ? 1 : 0; fresh.k += (ft - fresh.k) * 0.05;
+    if (fresh.k > 0.02) {
+      var fx = cx + R * 0.2 + fresh.k * R * 0.95, fy = cy - fresh.k * R * 0.55;
+      g.globalAlpha = fresh.k; g.fillStyle = "#7fe0c8"; g.beginPath(); g.arc(fx, fy, 6, 0, TAU); g.fill(); g.fillText("FRESH WALLET", Math.min(W - 80, fx - 36), fy - 18);
+      if (mode === 3) {
+        [["JUPITER", -0.45], ["PUMP.FUN", 0.55]].forEach(function (d, j) {
+          var tx = fx + (j ? R * 0.05 : -R * 0.35), ty = fy + R * (j ? 1.45 : 0.95), q = (t * 0.6 + j * 0.5) % 1;
+          g.strokeStyle = "rgba(127,224,200,.45)"; g.beginPath(); g.moveTo(fx, fy); g.lineTo(tx, ty); g.stroke();
+          g.fillStyle = "#7fe0c8"; g.beginPath(); g.arc(fx + (tx - fx) * q, fy + (ty - fy) * q, 2.5, 0, TAU); g.fill();
+          g.fillStyle = "rgba(239,233,218,.8)"; g.fillText(d[0], tx + 8, ty);
+        });
+      }
+      g.globalAlpha = 1;
+    }
+  }
+  var run = RM ? null : loop(draw, 30); if (run) visible(c, run); else draw(0);
+  if ("IntersectionObserver" in window) {
+    var so = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { mode = +e.target.getAttribute("data-step"); lab.textContent = NAMES[mode]; $$(".step").forEach(function (s) { s.classList.toggle("on", s === e.target); }); if (RM) draw(0); } });
+    }, { rootMargin: "-45% 0px -45% 0px" });
+    $$(".step").forEach(function (s) { so.observe(s); });
+  }
+})();
+
+/* ---------- the scanner ---------- */
+var Scan = (function () {
+  var form = $("#scanform"), input = $("#addr"), btn = $("#scanbtn"), msg = $("#scanmsg"), box = $("#scanbox"), verdict = $("#verdict"), tog = $("#aeonview");
+  var gc = $("#graph"), g = gc.getContext("2d"), data = null, born = 0, aeon = 0, aeonT = 0, nodes = [];
+  var B58 = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+  function f(k) { return $('[data-f="' + k + '"]'); }
+  function set(k, v) { var el = f(k); if (el) el.textContent = v; }
+  function ago(ts) {
+    if (ts == null) return "—";
+    var s = Math.max(0, Date.now() / 1000 - ts);
+    if (s < 90) return "just now"; if (s < 3600) return Math.round(s / 60) + " min ago"; if (s < 86400 * 2) return Math.round(s / 3600) + " h ago";
+    if (s < 86400 * 60) return Math.round(s / 86400) + " days ago"; if (s < 86400 * 730) return Math.round(s / 86400 / 30) + " months ago"; return Math.round(s / 86400 / 365) + " years ago";
+  }
+  function day(ts) { return ts == null ? "—" : new Date(ts * 1000).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" }); }
+  function sol(v) { if (v == null) return "—"; return (v >= 1000 ? v.toLocaleString("en-US", { maximumFractionDigits: 0 }) : v >= 1 ? v.toFixed(2) : v.toFixed(4)) + " SOL"; }
+  function reset() {
+    ["bal", "txs", "first", "last", "links", "funder"].forEach(function (k) { set(k, "—"); });
+    set("bals", "SOL, live"); set("txss", "public history"); set("firsts", " "); set("lasts", " "); set("linkss", "by direct SOL transfers"); set("funders", "the wallet that paid first");
+    f("apps").innerHTML = '<span class="chip">—</span>';
+  }
+  function render(d) {
+    data = d; born = performance.now(); aeon = 0; tog.hidden = false; tog.textContent = "See it through AEON";
+    set("bal", sol(d.balance));
+    set("txs", d.txs ? (d.capped ? d.txs.toLocaleString("en-US") + "+" : d.txs.toLocaleString("en-US")) : "0");
+    set("txss", d.capped ? "latest 1,000 shown; there are more" : "every transaction, public");
+    set("first", day(d.first)); set("firsts", d.first == null ? "no history" : d.capped ? "earliest of the latest 1,000" : ago(d.first));
+    set("last", ago(d.last)); set("lasts", d.last == null ? "no history" : day(d.last));
+    set("links", d.sampled ? String(d.linkCount) : "—"); set("linkss", d.sampled ? "in its latest " + d.sampled + " transactions" : "no transactions to read");
+    set("funder", d.funder ? short(d.funder) : "—"); set("funders", d.funder ? "paid its first SOL" : d.capped ? "too old to trace from here" : "no SOL transfer found");
+    var apps = (d.programs || []).filter(function (p) { return p.name; });
+    f("apps").innerHTML = apps.length ? apps.map(function (p) { return '<span class="chip">' + p.name + " ×" + p.n + "</span>"; }).join("") : '<span class="chip">—</span>';
+    var bits = [];
+    if (d.txs) bits.push("<b>" + (d.capped ? "1,000+" : d.txs) + "</b> public transactions");
+    if (d.linkCount) bits.push("direct links to <b>" + d.linkCount + "</b> other wallets");
+    if (d.funder) bits.push("a funding trail back to <b>" + short(d.funder) + "</b>");
+    if (apps.length) bits.push("a habit of using <b>" + apps.slice(0, 2).map(function (a) { return a.name; }).join(" and ") + "</b>");
+    verdict.innerHTML = bits.length ? "Anyone can see " + (bits.length > 1 ? bits.slice(0, -1).join(", ") + " and " + bits[bits.length - 1] : bits[0]) + ". Through AEON, a fresh wallet shows <b>none of it</b>." : "This wallet has no public history yet. That's what a fresh AEON wallet looks like: nothing to read.";
+    // graph nodes
+    nodes = (d.links || []).map(function (l, i, arr) {
+      var a = i / Math.max(1, arr.length) * TAU + 0.4, rr = 0.62 + ((i * 37) % 23) / 23 * 0.3;
+      return { a: a, r: rr, out: l.out, inn: l.in, addr: l.addr, w: l.in + l.out };
+    });
+    Seal.watch(gc, 5);
+  }
+  function err(t) { msg.textContent = t; }
+  form.addEventListener("submit", function (e) {
+    e.preventDefault(); var a = input.value.trim(); err("");
+    if (!B58.test(a)) { err("That doesn't look like a Solana address."); input.focus(); return; }
+    btn.disabled = true; btn.textContent = "Reading the chain…"; box.classList.add("loading"); reset(); verdict.textContent = "Reading what anyone can read…"; data = null; tog.hidden = true;
+    fetch("/api/scan?a=" + encodeURIComponent(a)).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (x) { if (!x.ok || x.j.error) throw new Error(x.j.error || "scan failed"); render(x.j); Sound.chime(); })
+      .catch(function (ex) { err((ex && ex.message) || "Solana RPC unavailable right now. Try again in a moment."); verdict.textContent = "Couldn't read the chain right now. Nothing was stored."; })
+      .then(function () { btn.disabled = false; btn.textContent = "Scan wallet"; box.classList.remove("loading"); });
+  });
+  tog.addEventListener("click", function () { aeon = aeon ? 0 : 1; aeonT = performance.now(); tog.textContent = aeon ? "Back to what they see" : "See it through AEON"; });
+  function draw(now) {
+    var s = fit(gc), W = s.w, H = s.h, cx = W / 2, cy = H / 2 - 12, R = Math.min(W, H) * 0.38, t = now;
+    g.setTransform(DPR, 0, 0, DPR, 0, 0); g.clearRect(0, 0, W, H);
+    g.font = "500 10px JetBrains Mono, monospace"; g.textBaseline = "middle";
+    g.strokeStyle = "rgba(230,204,146,.10)"; [0.45, 0.75, 1.0].forEach(function (k) { g.beginPath(); g.arc(cx, cy, R * k, 0, TAU); g.stroke(); });
+    if (!data) {
+      var p = 0.5 + 0.5 * Math.sin(t * 2);
+      g.fillStyle = "rgba(230,204,146," + (0.4 + 0.4 * p) + ")"; g.beginPath(); g.arc(cx, cy, 6, 0, TAU); g.fill();
+      g.fillStyle = "rgba(155,148,171,.9)"; var m = box.classList.contains("loading") ? "READING…" : "NO WALLET SCANNED"; g.fillText(m, cx - g.measureText(m).width / 2, cy + 26);
+      return;
+    }
+    var grow = ease((performance.now() - born) / 1400), fade = aeon ? 1 - ease((performance.now() - aeonT) / 900) : ease((performance.now() - aeonT) / 700);
+    if (!aeonT) fade = 1;
+    nodes.forEach(function (n, i) {
+      var k = ease(grow * 1.4 - i / nodes.length * 0.4), x = cx + Math.cos(n.a + t * 0.02) * R * n.r * k, y = cy + Math.sin(n.a + t * 0.02) * R * n.r * k * 0.85;
+      g.globalAlpha = fade;
+      g.strokeStyle = n.out >= n.inn ? "rgba(230,204,146,.55)" : "rgba(139,123,255,.65)"; g.lineWidth = Math.min(3, 0.8 + n.w * 0.3);
+      g.beginPath(); g.moveTo(cx, cy); g.lineTo(x, y); g.stroke();
+      g.fillStyle = n.out >= n.inn ? "#e6cc92" : "#8b7bff"; g.beginPath(); g.arc(x, y, 3 + Math.min(4, n.w * 0.6), 0, TAU); g.fill();
+      if (i < 6 && W > 380) { g.fillStyle = "rgba(155,148,171,.85)"; g.fillText(short(n.addr), x + 8, y); }
+    });
+    if (data.funder) {
+      var fx = cx, fy = cy - R * 1.02 * grow;
+      g.globalAlpha = fade; g.setLineDash([4, 4]); g.strokeStyle = "rgba(255,123,116,.7)"; g.lineWidth = 1.2; g.beginPath(); g.moveTo(cx, cy); g.lineTo(fx, fy); g.stroke(); g.setLineDash([]);
+      g.fillStyle = "#ff7b74"; g.beginPath(); g.arc(fx, fy, 5, 0, TAU); g.fill(); var ft = "FUNDED BY " + short(data.funder); g.fillText(ft, fx - g.measureText(ft).width / 2, fy - 14);
+    }
+    g.globalAlpha = 1;
+    var col = aeon ? "#7fe0c8" : "#efe9da";
+    g.fillStyle = col; g.shadowColor = aeon ? "rgba(127,224,200,.8)" : "rgba(230,204,146,.8)"; g.shadowBlur = 16; g.beginPath(); g.arc(cx, cy, 8, 0, TAU); g.fill(); g.shadowBlur = 0;
+    var lab = aeon ? "FRESH WALLET · NO PAST" : short(data.addr);
+    g.fillStyle = col; g.fillText(lab, cx - g.measureText(lab).width / 2, cy + 22);
+  }
+  var run = loop(function () { draw(performance.now() / 1000); }, 30); visible(gc, run);
+  return { render: render };
+})();
+
+/* ---------- contract + market ---------- */
+(function () {
+  var ca = $("#ca"), cp = $("#cacopy"), mint = null;
+  function money(v, d) { if (v == null) return "—"; if (v >= 1e9) return "$" + (v / 1e9).toFixed(2) + "B"; if (v >= 1e6) return "$" + (v / 1e6).toFixed(2) + "M"; if (v >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K"; if (d) return "$" + (v < 0.0001 ? v.toPrecision(3) : v.toFixed(v < 1 ? 6 : 2)); return "$" + v.toFixed(0); }
+  cp.addEventListener("click", function () { if (!mint) return; (navigator.clipboard ? navigator.clipboard.writeText(mint) : Promise.reject()).then(function () { cp.textContent = "COPIED"; setTimeout(function () { cp.textContent = "COPY"; }, 1400); }, function () {}); });
+  function market() {
+    fetch("/api/market").then(function (r) { return r.json(); }).then(function (j) {
+      var src = $("#msrc");
+      if (!j.live) { src.textContent = "Live market data appears here once the contract is posted. A dash means no data yet, never zero."; return; }
+      if (j.error) { src.textContent = "Market data unavailable right now. Showing dashes until it's back."; return; }
+      var p = j.pair || {};
+      $('[data-m="price"]').textContent = money(p.price, true); $('[data-m="mcap"]').textContent = money(p.mcap); $('[data-m="vol"]').textContent = money(p.vol); $('[data-m="liq"]').textContent = money(p.liq);
+      src.textContent = j.pair ? "Live from DexScreener · updated " + new Date(j.t).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "Contract posted. No trading pair found yet.";
+    }).catch(function () { $("#msrc").textContent = "Market data unavailable right now. Showing dashes until it's back."; });
+  }
+  fetch("/api/config").then(function (r) { return r.json(); }).then(function (c) {
+    if (c && c.mint) { mint = c.mint; ca.textContent = mint; cp.disabled = false; ca.title = mint; }
+    else ca.textContent = "— posted here at launch";
+  }).catch(function () { ca.textContent = "—"; });
+  market(); setInterval(market, 60000);
+})();
+})();
+
+</script>
+</body>
+</html>
